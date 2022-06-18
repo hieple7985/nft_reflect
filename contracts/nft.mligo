@@ -1,1 +1,1 @@
-#include "TZIP-12(FA2)/standard_contract/FA2_multi_asset.mligo"
+#include "TZIP-12/with_mint_and_burn/FA2_multi_asset_updated.mligo"
