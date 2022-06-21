@@ -1,0 +1,23 @@
+{
+  "name": "nft_reflect",
+  "version": "1.0.0",
+  "description": "NFTs that change with the world",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "npm run test"
+  },
+  "devDependencies": {
+    "ligo-assert": "git@github.com:littlezigy/ligo-test-assert.git"
+  },
+  "keywords": [
+    "[nft",
+    "ligo",
+    "fa2",
+    "generative-art]"
+  ],
+  "author": "Adesuwa Dawodu",
+  "license": "ISC"
+}
