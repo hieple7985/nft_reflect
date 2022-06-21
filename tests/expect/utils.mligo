@@ -1,0 +1,24 @@
+let fail_str = "xx ASSERTION FAILED - "
+let pass_str = "++ ASSERTION PASSED "
+
+type str_record = { ans : string }
+
+let tost_result (fails : nat option) : string =
+  let response = match fails with
+    Some v -> 
+      if v > 0n
+      then
+        let fail_str = "FAILED WITH" in
+        if v=1n then fail_str ^ " 1 failed assertion"
+        else if v=2n then fail_str ^ " 2 failed assertion"
+        else fail_str ^ " many failed assertions"
+      else
+        "PASSED"
+  |  None -> "PENDING"
+
+    in response
+
+let add_fail(init_fail, fail : nat option * nat) : nat option =
+  match init_fail with
+    Some v -> Some(v + fail)
+  | None -> Some(0n + fail)
