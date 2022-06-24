@@ -1,17 +1,11 @@
 type param = string
+type parameter = param
 
-type data = {
-    int: int;
-    string: string;
-    nat: nat
+type response_value = {
+    value: bytes;
+    type_: string
 }
 
-type country_data = {
-  air_quality_index: int;
-  happy_people: int;
-  name: string
-}
-
-type storage = (string, (string, int) map) map
+type storage = (string, (string, response_value) map) map
 
 type response = storage

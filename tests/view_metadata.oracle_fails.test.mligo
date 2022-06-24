@@ -19,8 +19,8 @@ let test_token_metadata_case_when_oracle_fails =
 
     let oracle_storage : MockOracleError.storage = Map.literal [
         ("france", Map.literal[
-         ("air_quality_index", 4);
-         ("happy_people", 72);
+         ("air_quality_index", {value=Bytes.pack(4); type_="int"});
+         ("happy_people", {value=Bytes.pack(72); type_="int"});
         ])
     ] in
 
@@ -35,7 +35,7 @@ let test_token_metadata_case_when_oracle_fails =
                 top_level_param_name="france";
                 param_name="foo";
                 operator="=";
-                value=3
+                value=Bytes.pack(3)
             };
             fields = [{ name = "name"; value=Bytes.pack "fancy_name_1" }]
         }];

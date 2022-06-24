@@ -37,12 +37,10 @@ type token_id = nat
                 let loop_cases = fun(u_token_info, case : TokenMetadata.token_info * MetadataMutate.case) ->
                     let condition = case.condition in
                     let u_token_info =
-                        (*
                         if ParseCondition.parseResponse(condition.top_level_param_name, condition.param_name, condition.operator, condition.value, k)
                         then
-                        *)
                             List.fold update_fields case.fields u_token_info
-                        // else u_token_info
+                        else u_token_info
                      in
                      u_token_info
                 in

@@ -137,7 +137,7 @@ module MetadataMutate = struct
             top_level_param_name: string;
             param_name: string;
             operator: string;
-            value: int
+            value: bytes
         };
         fields: fields
     }
