@@ -110,7 +110,8 @@ module TokenMetadata = struct
       TZIP-12 : https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-12/tzip-12.md#token-metadata
       or TZIP-16 : https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-12/tzip-12.md#contract-metadata-tzip-016
    *)
-   type data = {token_id:nat;token_info:(string,bytes)map}
+   type token_info = (string,bytes)map
+   type data = {token_id:nat;token_info:token_info}
    type t = (nat, data) big_map
 
    let add_new_token (md:t) (token_id : nat) (data:data) =
@@ -119,33 +120,67 @@ module TokenMetadata = struct
       md
 end
 
+module MetadataMutate = struct
+    type oracle = {
+        fn_name: string;
+        address:address;
+        params: string
+    }
+    type field = {
+        name: string;
+        value: bytes
+    }
+    type fields = field list
+
+    type case = {
+        condition: {
+            top_level_param_name: string;
+            param_name: string;
+            operator: string;
+            value: int
+        };
+        fields: fields
+    }
+
+    type cases = case list
+end
+
 module Storage = struct
-   type token_id = nat
-   type t = {
-      ledger : Ledger.t;
-      token_metadata : TokenMetadata.t;
-      operators : Operators.t;
-      admin     : address
-   }
+    type token_id = nat
 
-   let assert_token_exist (s:t) (token_id : nat) : unit  =
-      let _ = Option.unopt_with_error (Big_map.find_opt token_id s.token_metadata)
-         Errors.undefined_token in
-      ()
+    type metadata_mutate = {
+        oracle: MetadataMutate.oracle;
+        cases: MetadataMutate.cases
+    }
 
-   let get_token_metadata (s:t) = s.token_metadata
-   let set_token_metadata (s:t) (token_metadata:TokenMetadata.t) = {s with token_metadata = token_metadata}
+    type token_metadata_mutate = (nat, metadata_mutate) big_map
 
-   let get_ledger (s:t) = s.ledger
-   let set_ledger (s:t) (ledger:Ledger.t) = {s with ledger = ledger}
+  type t = {
+    ledger : Ledger.t;
+    token_metadata : TokenMetadata.t;
+    token_metadata_mutate: token_metadata_mutate;
+    operators : Operators.t;
+    admin     : address
+  }
 
-   let get_operators (s:t) = s.operators
-   let set_operators (s:t) (operators:Operators.t) = {s with operators = operators}
+  let assert_token_exist (s:t) (token_id : nat) : unit  =
+    let _ = Option.unopt_with_error (Big_map.find_opt token_id s.token_metadata)
+       Errors.undefined_token in
+    ()
 
-   let assert_admin (s:t) : unit =
-      assert_with_error (Tezos.get_sender() = s.admin) Errors.requires_admin
+  let get_token_metadata (s:t) = s.token_metadata
+  let set_token_metadata (s:t) (token_metadata:TokenMetadata.t) = {s with token_metadata = token_metadata}
 
-   let set_admin (s:t) (admin:address) = {s with admin = admin}
+  let get_ledger (s:t) = s.ledger
+  let set_ledger (s:t) (ledger:Ledger.t) = {s with ledger = ledger}
+
+  let get_operators (s:t) = s.operators
+  let set_operators (s:t) (operators:Operators.t) = {s with operators = operators}
+
+  let assert_admin (s:t) : unit =
+    assert_with_error (Tezos.get_sender() = s.admin) Errors.requires_admin
+
+  let set_admin (s:t) (admin:address) = {s with admin = admin}
 end
 
 
@@ -302,25 +337,3 @@ let burn (lst : mint_or_burn list) (s : storage) =
    let s = Storage.set_ledger s ledger in
    ([]: operation list),s
 
-
-type parameter = [@layout:comb]
-   | Transfer of transfer
-   | Balance_of of balance_of
-   | Update_operators of update_operators
-   | Set_admin of address
-   | Create_token of create_token
-   (* alternative where create also mint
-   | Create_token of create_token * address * mint *)
-   | Mint_token of mint_or_burn list
-   | Burn_token of mint_or_burn list
-
-let main ((p,s):(parameter * storage)) = match p with
-   Transfer         p -> transfer   p s
-|  Balance_of       p -> balance_of p s
-|  Update_operators p -> update_ops p s
-
-(* extended admin operations *)
-| Set_admin         p -> set_admin  p s
-| Create_token      p -> create     p s
-| Mint_token        p -> mint       p s
-| Burn_token        p -> burn       p s

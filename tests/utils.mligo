@@ -48,16 +48,19 @@ let get_initial_storage (a, b, c : nat * nat * nat) =
   ])
   in
   
-  let token_info = (Map.empty: (string, bytes) map) in
   let token_metadata = (Big_map.literal [
     (1n, ({token_id=1n;token_info=(Map.empty : (string, bytes) map);} : FA2_multi_asset.TokenMetadata.data));
     (2n, ({token_id=2n;token_info=(Map.empty : (string, bytes) map);} : FA2_multi_asset.TokenMetadata.data));
     (3n, ({token_id=3n;token_info=(Map.empty : (string, bytes) map);} : FA2_multi_asset.TokenMetadata.data));
   ] : FA2_multi_asset.TokenMetadata.t) in
 
+  (* Token metadata mutation *)
+  let token_metadata_mutate = (Big_map.empty : FA2_multi_asset.Storage.token_metadata_mutate) in
+
   let initial_storage = {
     ledger                = ledger;
     token_metadata        = token_metadata;
+    token_metadata_mutate = token_metadata_mutate;
     operators             = operators;
     admin                 = owner1;
   } in

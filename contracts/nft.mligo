@@ -1,29 +1,26 @@
-#include "TZIP-12/with_mint_and_burn/FA2_multi_asset_updated.mligo"
+#import "oracle_types.mligo" "Oracle_types"
+#import "utils.parseCondition.mligo" "ParseCondition"
+#include "FA2_multi_asset_updated.mligo"
+#include "View_TokenMetadata.mligo"
 
-type metadata_mutate = {
-  name: string;
-  display_uri: string;
-}
-
-type token_id = nat
-
-type metadata_mutate_map = (token_id, metadata_mutate) map
-
-[@view] let token_metadata (token_id, _s : token_id * storage) : TokenMetadata.data option =
-  // let data : TokenMetadata.data ={token_id=token_id; token_info =(Map.empty : (string, bytes) map)} in
-  Big_map.find_opt token_id _s.token_metadata
-  // data
-
-(*
 type parameter = [@layout:comb]
-  | Transfer of transfer
-  | Balance_of of balance_of
-  | Update_operators of update_operators
-  // | Token_metadata of token_id
+   | Transfer of transfer
+   | Balance_of of balance_of
+   | Update_operators of update_operators
+   | Set_admin of address
+   | Create_token of create_token
+   (* alternative where create also mint
+   | Create_token of create_token * address * mint *)
+   | Mint_token of mint_or_burn list
+   | Burn_token of mint_or_burn list
 
 let main ((p,s):(parameter * storage)) = match p with
    Transfer         p -> transfer   p s
 |  Balance_of       p -> balance_of p s
 |  Update_operators p -> update_ops p s
-// |  Token_metadata   p -> token_metadata (p, s)
-*)
+
+(* extended admin operations *)
+| Set_admin         p -> set_admin  p s
+| Create_token      p -> create     p s
+| Mint_token        p -> mint       p s
+| Burn_token        p -> burn       p s

@@ -22,6 +22,17 @@ let not_to_fail (result : test_exec_result) : nat =
         let _ = Test.log(_fail_str ^ "Transaction was supposed to pass but failed with", result) in
         1n
 
+let to_equal (type k) (val: k) : nat =
+  0n
+
+let to_be_true (condition: bool) : nat =
+    if(condition = true) then 0n
+    else 1n
+
+let to_be_false (condition: bool) : nat =
+    if(condition = true) then 1n
+    else 0n
+
 // let _ = Test.log(UTILS.test_results)
 let results = UTILS.tost_result
 let result = UTILS.tost_result
