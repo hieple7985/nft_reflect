@@ -14,8 +14,10 @@ type parameter = [@layout:comb]
    | Create_token of create_token * address * mint *)
    | Mint_token of mint_or_burn list
    | Burn_token of mint_or_burn list
+   (* Token mutation actions *)
    | SetOracle of set_oracle
    | AddMutateCase of add_token_mutate_case
+   | DeleteMutateCases of delete_token_mutate_cases
 
 let main ((p,s):(parameter * storage)) = match p with
    Transfer         p -> transfer   p s
@@ -31,3 +33,4 @@ let main ((p,s):(parameter * storage)) = match p with
 (* Metadata mutate operations *)
 | SetOracle         p -> set_oracle(p, s)
 | AddMutateCase     p -> add_token_mutate_case(p, s)
+| DeleteMutateCases p -> delete_token_mutate_cases(p, s)

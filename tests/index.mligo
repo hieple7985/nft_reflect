@@ -25,5 +25,6 @@ module List_helper = UTILS.List_helper
 #include "view_metadata.no_mutate_data.test.mligo"
 #include "view_metadata.one_to_one_mappings.test.mligo"
 #include "add_mutation_oracle.test.mligo"
+#include "reset_mutation_condition_mappings.test.mligo"
 #include "add_mutation_condition_mappings.test.mligo"
 #include "e2e/index.mligo"

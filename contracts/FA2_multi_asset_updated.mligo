@@ -161,6 +161,15 @@ module TokenMutate = struct
 
         in md
 
+    let delete_token_mutate_cases (md:t) (token_id:nat) = 
+        let md = match Big_map.find_opt token_id md with
+          Some v -> let new_case_list = ([] : cases) in
+            let new_data : data = { v with cases = new_case_list } in
+            Big_map.update token_id (Some(new_data)) md
+        | None -> md in
+
+        md
+
     let set_oracle (token_mutates:t) (token_id: nat) (oracle: oracle) : t =
         let token_mutates : t = match Big_map.find_opt token_id token_mutates with
           None -> Big_map.add token_id {oracle=oracle; cases=([]: cases)} token_mutates
