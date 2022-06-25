@@ -1,5 +1,5 @@
 let test_token_metadata_case_when_oracle_fails = 
-    let fails : nat option = None in
+    let asserts : nat option = None in
     let token_id : FA2.token_id = 1n in
     let old_name = Bytes.pack("The default name for token") in
     let old_desc = Bytes.pack("The default description for this token") in
@@ -54,22 +54,22 @@ let test_token_metadata_case_when_oracle_fails =
 
     let token_metadata_res = Test.transfer_to_contract viewCaller nft_addr 0tez in
 
-    let fails = add_fail(fails, EXPECT.not_to_fail(token_metadata_res)) in
+    let asserts = add_assert(asserts, EXPECT.not_to_fail(token_metadata_res)) in
 
     let token_metadata_res = match Test.get_storage viewCaller_taddr with
         Some v -> v
-        | None -> failwith("failed")
+        | None -> failwith("asserted")
         in
 
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
             EXPECT.MAP.to_have_key_of_value( "description", old_desc, token_metadata_res.token_info)
             ) in
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
             EXPECT.MAP.to_have_key_of_value( "name", old_name, token_metadata_res.token_info)
             ) in
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
             EXPECT.MAP.to_have_key_of_value( "displayUri", old_uri, token_metadata_res.token_info)
             ) in
 
-    EXPECT.results fails
+    EXPECT.results asserts
 

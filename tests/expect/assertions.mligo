@@ -5,8 +5,6 @@
 let _fail_str = UTILS.fail_str
 let _pass_str = UTILS.pass_str
 
-#include "STRING.mligo"
-
 let to_fail (result : test_exec_result) : nat =
     // let expected = Test.eval expected in
     match result with
@@ -59,8 +57,13 @@ let to_be_false (condition: bool) : nat =
 // let _ = Test.log(UTILS.test_results)
 let results = UTILS.tost_result
 let result = UTILS.tost_result
+let add_assert = UTILS.add_assert
 let add_fail = UTILS.add_fail
 
 module INT = INT
 module MAP = MAP
 #include "BIG_MAP.mligo"
+#include "STRING.mligo"
+#include "BYTES.mligo"
+#include "LIST.mligo"
+

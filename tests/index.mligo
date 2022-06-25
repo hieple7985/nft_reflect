@@ -13,6 +13,7 @@
 #import "utils.originate_contracts.mligo" "OriginateContract"
 
 let add_fail = EXPECT.add_fail
+let add_assert = EXPECT.add_assert
 let get_initial_storage = UTILS.get_initial_storage
 module List_helper = UTILS.List_helper
 

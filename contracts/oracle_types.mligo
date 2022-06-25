@@ -6,6 +6,4 @@ type response_value = {
     type_: string
 }
 
-type storage = (string, (string, response_value) map) map
-
-type response = storage
+type response = (string, (string, response_value) map) map

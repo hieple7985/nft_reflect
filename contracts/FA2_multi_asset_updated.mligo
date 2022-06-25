@@ -20,7 +20,8 @@ module Errors = struct
     let requires_admin  = "NOT_AN_ADMIN"
     let already_exist   = "UNIQUE_TOKEN_ALREADY_EXIST"
     let token_exist     = "TOKEN_ID_ALREADY_PRESENT"
-    let bad_oracle      = "FA2_TOKEN_BAD_ORACLE"
+    let bad_oracle      = "TOKEN_BAD_ORACLE"
+    let set_oracle_first= "SET_ORACLE_FIRST"
 end
 
 module Operators = struct
@@ -152,10 +153,12 @@ module TokenMutate = struct
 
     type t = (nat, {oracle: oracle; cases: cases}) big_map
 
-    let add_token_mutate (md:t) (token_id:nat) (mutate_data: data) = 
-        let md = if Big_map.mem token_id md then
-            Big_map.update token_id (Some(mutate_data)) md
-        else Big_map.add token_id mutate_data md
+    let add_token_mutate_case (md:t) (token_id:nat) (mutate_data: case) = 
+        let md = match Big_map.find_opt token_id md with
+          Some v -> let new_case_list = mutate_data :: v.cases in
+            let new_data : data = { v with cases = new_case_list } in
+            Big_map.update token_id (Some(new_data)) md
+        | None ->  failwith Errors.set_oracle_first
 
         in md
 

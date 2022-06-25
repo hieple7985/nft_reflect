@@ -18,7 +18,15 @@ let tost_result (fails : nat option) : string =
 
     in response
 
-let add_fail(init_fail, fail : nat option * nat) : nat option =
+let add_assert(init_fail, fail : nat option * nat) : nat option =
   match init_fail with
     Some v -> Some(v + fail)
   | None -> Some(0n + fail)
+
+let add_fail(init_fail : nat option) : nat option =
+  match init_fail with
+    Some v -> Some(v + 1n)
+  | None -> Some(1n)
+
+let print_fail (type a) (val : a) : unit =
+    let _ = Test.log("FAiled", val) in ()

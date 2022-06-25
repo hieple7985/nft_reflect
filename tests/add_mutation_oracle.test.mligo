@@ -1,5 +1,5 @@
 let test_add_mutation_oracle_pass =
-    let fails : nat option = None in
+    let asserts : nat option = None in
     let token_id : FA2.token_id = 10n in
 
     let (nft_storage, owners, _) = get_initial_storage(10n, 10n, 10n) in
@@ -14,7 +14,7 @@ let test_add_mutation_oracle_pass =
 
     // Sanity check: Checking storage before adding oracle details for token mutate
     let storage = Test.get_storage nft_taddr in
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
         EXPECT.BIG_MAP.to_not_have_key(token_id, storage.token_mutate)
     ) in
 
@@ -27,7 +27,7 @@ let test_add_mutation_oracle_pass =
 
     let params : FA2.set_oracle = {token_id=token_id; oracle=oracle_details} in
 
-    let fails = add_fail(fails, 
+    let asserts = add_assert(asserts, 
         EXPECT.not_to_fail( Test.transfer_to_contract nft (SetOracle params: FA2.parameter) 0tez )
     ) in
 
@@ -37,18 +37,18 @@ let test_add_mutation_oracle_pass =
       None -> Test.failwith "unacceptable!"
     | Some v -> v in
 
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
         EXPECT.BIG_MAP.to_have_key(token_id, storage.token_mutate)
     ) in
 
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
         EXPECT.STRING.to_equal(storage_token_mutate.oracle.params, oracle_details.params)
     ) in
 
-    EXPECT.results fails
+    EXPECT.results asserts
 
 let test_add_mutation_oracle_fail_if_caller_is_not_admin =
-    let fails : nat option = None in
+    let asserts : nat option = None in
     let token_id : FA2.token_id = 1n in
 
     let (nft_addr, nft_taddr, nft) = OriginateContract.nft (None: FA2.storage option) in
@@ -63,14 +63,14 @@ let test_add_mutation_oracle_fail_if_caller_is_not_admin =
 
     let params : FA2.set_oracle = {token_id=token_id; oracle=oracle_details} in
 
-    let fails = add_fail(fails, 
+    let asserts = add_assert(asserts, 
         EXPECT.to_fail_with( Test.transfer_to_contract nft (SetOracle params: FA2.parameter) 0tez , FA2.Errors.requires_admin)
     ) in
 
-    EXPECT.results fails
+    EXPECT.results asserts
 
 let test_add_mutation_oracle_fail_if_oracle_doesnt_exist =
-    let fails : nat option = None in
+    let asserts : nat option = None in
     let token_id : FA2.token_id = 1n in
 
     let (nft_storage, owners, _) = get_initial_storage(10n, 10n, 10n) in
@@ -88,14 +88,14 @@ let test_add_mutation_oracle_fail_if_oracle_doesnt_exist =
 
     let params : FA2.set_oracle = {token_id=token_id; oracle=oracle_details} in
 
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
         EXPECT.to_fail_with( Test.transfer_to_contract nft (SetOracle params: FA2.parameter) 0tez, FA2.Errors.bad_oracle )
     ) in
 
-    EXPECT.results fails
+    EXPECT.results asserts
 
 let test_add_mutation_oracle_fail_if_oracle_is_wrong_contract_type =
-    let fails : nat option = None in
+    let asserts : nat option = None in
     let token_id : FA2.token_id = 1n in
 
     let (nft_storage, owners, _) = get_initial_storage(10n, 10n, 10n) in
@@ -113,8 +113,8 @@ let test_add_mutation_oracle_fail_if_oracle_is_wrong_contract_type =
 
     let params : FA2.set_oracle = {token_id=token_id; oracle=oracle_details} in
 
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
         EXPECT.to_fail_with( Test.transfer_to_contract nft (SetOracle params: FA2.parameter) 0tez, FA2.Errors.bad_oracle)
     ) in
 
-    EXPECT.results fails
+    EXPECT.results asserts

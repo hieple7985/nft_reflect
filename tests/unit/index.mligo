@@ -2,6 +2,7 @@
 #import "../utils.mligo" "UTILS"
 
 let add_fail = EXPECT.add_fail
+let add_assert = EXPECT.add_assert
 let get_initial_storage = UTILS.get_initial_storage
 
 // #include "view_metadata.unit.test.mligo"

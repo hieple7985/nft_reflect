@@ -1,5 +1,5 @@
 let test_Token_metadata_should_return_metadata_in_storage_if_no_mutate = 
-    let fails : nat option = None in
+    let asserts : nat option = None in
     let init_storage, _, _ = get_initial_storage(10n, 10n, 10n) in
 
     let storage_t_metadata = match Big_map.find_opt 1n init_storage.token_metadata with
@@ -42,14 +42,14 @@ let test_Token_metadata_should_return_metadata_in_storage_if_no_mutate =
     | None -> failwith("failed")
     in
 
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
             EXPECT.MAP.to_have_key_of_value( "description", description, token_metadata_res.token_info)
             ) in
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
             EXPECT.MAP.to_have_key_of_value( "name", name, token_metadata_res.token_info)
             ) in
-    let fails = add_fail(fails,
+    let asserts = add_assert(asserts,
             EXPECT.MAP.to_have_key_of_value( "displayUri", displayUri, token_metadata_res.token_info)
             ) in
 
-    EXPECT.results fails
+    EXPECT.results asserts

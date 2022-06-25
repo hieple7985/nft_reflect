@@ -1,5 +1,7 @@
 #include "../../contracts/oracle_types.mligo"
 
+type storage = response
+
 [@view] let data (_foobar, _s: string * storage) : storage =
     let () = failwith("Oracle is supposed to fail") in
     _s
