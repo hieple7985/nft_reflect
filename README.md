@@ -6,22 +6,8 @@ The metadata for these NFTs can be mutated. To make your NFTs have names, descri
 - For token images, links to the images you're planning to use.
 
 ### How To
-When you mint your token, make sure you add your token metadata fields. If your oracle ever fails, the metadata you've entered will be used.
-- After minting, call `addMetadataMutation(field, (condition, value) map)`. `condition` is a string, and `value` is a map.
-For example, let's say you're fetching data from an oracle that reports on health stats for a city. It's return looks like this
-```
-{
-        health_index: 72,
-        population: 11263
-        ...
-}
-```
+When you mint your token, make sure you add your token metadata fields. If your oracle ever fails for any reason, the metadata you've entered will be used.
+- After minting, call `addOracle(oracle_contract_address, oracle_parameters)`, and `value` is a map.
+- Then, call `addMetadataMutation(field, (condition, value) map)`. `condition` is a string, and `value` is a map. You can only call addMetadataMutation if you have previously added an oracle with `addOracle`
 
-Say your field is the token displayUri. You want to display a different images for different contions:
-        - image1 when the oracle returns { health_index < 50 }
-                - `addMetadataMutation("displayUri", "oracle1.health_index<50", "https://image1.jpg")`
-        - image2 when the oracle returns { health_index = 50 }
-                - `addMetadataMutation("displayUri", "oracle1.health_index=50", "https://image2.jpg")`
-        - image3 when the oracle returns { health_index > 50 }
-                - `addMetadataMutation("displayUri", "oracle1.health_index>50", "https://image3.jpg")`
-
+You can get data for the `addMetadataMutation(field, (condition, value) map)` function at the [NFT Reflect Utilities](https://littlezigy.github.io/nft-reflect-utils/) website. Enter in the conditions and their corresponding fields values in the inputs on the page, and click the `Get Code` button.
