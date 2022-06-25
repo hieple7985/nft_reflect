@@ -13,14 +13,11 @@ type token_id = nat
           None -> token_info
         | Some mutate -> 
             let oracle_addr : address = mutate.oracle.address in
-            // let oracle : (Oracle_types.param)contract = Tezos.get_contract_with_error oracle_addr "Oracle not found" in
 
             let oracle_response : Oracle_types.response option = Tezos.call_view "data" mutate.oracle.params oracle_addr in
-            // let oracle_response : Oracle_types.response option = Tezos.call_view "data" "foo_bar" oracle_addr in
 
             let updated_token_info = match oracle_response with
               None -> token_info
-              // None -> failwith("empty response from oracle")
             | Some k ->
                 let update_fields = fun(new_token_info, field : TokenMetadata.token_info * TokenMutate.field) ->
                     let new_token_info: TokenMetadata.token_info = match Map.find_opt field.name new_token_info with

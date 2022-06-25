@@ -1,30 +1,36 @@
 // Tests that metadata is switched when mutation info is in one-to-one mappings
 // of condition -> metadata.field = value
 
-let test_token_metadata_one_to_one_mappings = 
+let test_e2e_token_metadata_one_to_one_mappings = 
     let asserts : nat option = None in
     let token_id : FA2.token_id = 1n in
     let token_data = {token_id=token_id;token_info=(Map.empty : (string, bytes) map);} in
     let nft_storage, _, _ = get_initial_storage(10n, 10n, 10n) in
 
-    let oracle_storage : MockOracle.storage = Map.literal [
-        ("japan", Map.literal[
-         ("air_quality_index", {value=Bytes.pack(4); type_="int"});
-         ("happy_people", {value=Bytes.pack(72); type_="int"});
+    let oracle_storage : Oracle.storage = Big_map.literal [
+        ("organization1", Map.literal[
+            ("countries", Map.literal[
+                ("japan", Map.literal[
+                    ("air_quality_index", {value=Bytes.pack(4); type_="int"});
+                    ("happy_people", {value=Bytes.pack(72); type_="int"});
+                ])
+            ])
         ])
     ] in
 
-    let (mockOracle_addr, mockOracle_taddr, mockOracle) = OriginateContract.mock_oracle(Some(oracle_storage)) in
+    let (oracle_addr, oracle_taddr, oracle) = OriginateContract.oracle(Some(oracle_storage)) in
 
     let name = Bytes.pack("Name on condition 1") in
     let description = Bytes.pack("Don't Count Your Chickens Before They Hatch\nMeaning: Do not rely on something you are not sure of.") in
     let displayUri = Bytes.pack("https://images.random/image/on_condition_1") in
 
+    let not_found = "artifactUri" in
+
     let token_mutate_1n : FA2.Storage.metadata_mutate = {
-        oracle = {address = mockOracle_addr; params = [("foobar", "oobar", "bar")]};
+        oracle = {address = oracle_addr; params = [("organization1", "countries", "japan")]};
         cases = [{
                 condition = {
-                    top_level_param_name="japan";
+                    top_level_param_name="organization1-countries-japan";
                     param_name="air_quality_index";
                     operator="=";
                     value=Bytes.pack(4)
@@ -35,10 +41,22 @@ let test_token_metadata_one_to_one_mappings =
             };
             {
                 condition = {
-                    top_level_param_name="japan";
+                    top_level_param_name="organization1-countries-japan";
+                    param_name="happy_people";
+                    operator="<";
+                    value=Bytes.pack(40)
+                };
+                fields = [
+                    { name = "description"; value=Bytes.pack("Saddest people in the world") };
+                    { name = not_found; value=Bytes.pack("This is a note to the world's saddest people. Liven up") }
+                ]
+            };
+            {
+                condition = {
+                    top_level_param_name="organization1-countries-japan";
                     param_name="happy_people";
                     operator=">=";
-                    value=Bytes.pack(70)
+                    value=Bytes.pack(72)
                 };
                 fields = [{ name = "description"; value=description }]
             };
@@ -69,10 +87,13 @@ let test_token_metadata_one_to_one_mappings =
     let asserts = add_assert(asserts,
             EXPECT.MAP.to_have_key_of_value( "displayUri", displayUri, token_metadata_res.token_info)
             ) in
+    let asserts = add_assert(asserts,
+            EXPECT.MAP.to_not_have_key( not_found, token_metadata_res.token_info)
+            ) in
 
     EXPECT.results asserts
 
-let test_token_metadata_case_when_mutates_false = 
+let test_e2e_token_metadata_case_when_mutates_false = 
     let asserts : nat option = None in
     let token_id : FA2.token_id = 1n in
     let old_name = Bytes.pack("The default name for token") in
@@ -91,20 +112,24 @@ let test_token_metadata_case_when_mutates_false =
 
     let nft_storage = { nft_storage with token_metadata = token_metadata } in
 
-    let oracle_storage : MockOracle.storage = Map.literal [
-        ("france", Map.literal[
-         ("air_quality_index", {value=Bytes.pack(4); type_="int"});
-         ("happy_people", {value=Bytes.pack(72); type_="int"});
+    let oracle_storage : Oracle.storage = Big_map.literal [
+        ("organization1", Map.literal[
+            ("countries", Map.literal[
+                ("france", Map.literal[
+                 ("air_quality_index", {value=Bytes.pack(4); type_="int"});
+                 ("happy_people", {value=Bytes.pack(72); type_="int"});
+                ])
+            ])
         ])
     ] in
 
-    let (mockOracle_addr, mockOracle_taddr, mockOracle) = OriginateContract.mock_oracle(Some(oracle_storage)) in
+    let (oracle_addr, oracle_taddr, oracle) = OriginateContract.oracle(Some(oracle_storage)) in
 
     let token_mutate_1n : FA2.Storage.metadata_mutate = {
-        oracle = {address = mockOracle_addr; params = [("foobar", "oobar", "bar")]};
+        oracle = {address = oracle_addr; params = [("organization1", "countries", "france")]};
         cases = [{
             condition = {
-                top_level_param_name="france";
+                top_level_param_name="organization1-countries-france";
                 param_name="foo";
                 operator="=";
                 value=Bytes.pack(3)

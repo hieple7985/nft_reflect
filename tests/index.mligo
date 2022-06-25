@@ -1,6 +1,6 @@
-#import "expect/assertions.mligo" "EXPECT"
 #import "../contracts/nft.mligo" "FA2"
 #import "../contracts/nft.mligo" "FA2_NFT"
+#import "../contracts/oracle.mligo" "Oracle"
 
 // Mock contracts
 #import "mock_contracts/view_caller.mligo" "View_caller"
@@ -20,8 +20,10 @@ module List_helper = UTILS.List_helper
 // #include "view_metadata.unit.test.mligo"
 // Tests
 #include "unit/index.mligo"
+#include "oracle.test.mligo"
 #include "view_metadata.oracle_fails.test.mligo"
 #include "view_metadata.no_mutate_data.test.mligo"
 #include "view_metadata.one_to_one_mappings.test.mligo"
 #include "add_mutation_oracle.test.mligo"
 #include "add_mutation_condition_mappings.test.mligo"
+#include "e2e/index.mligo"

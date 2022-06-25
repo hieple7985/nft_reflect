@@ -18,11 +18,11 @@ let test_add_mutation_oracle_pass =
         EXPECT.BIG_MAP.to_not_have_key(token_id, storage.token_mutate)
     ) in
 
+    let oracle_params_only = ("blah", "oobar", "bar") in
     let (oracle_addr, _, _) = OriginateContract.mockOracle (None: MockOracle.storage option) in
     let oracle_details : FA2.TokenMutate.oracle = {
-        fn_name = "data";
         address = oracle_addr;
-        params = "blah";
+        params = [oracle_params_only];
     } in
 
     let params : FA2.set_oracle = {token_id=token_id; oracle=oracle_details} in
@@ -41,9 +41,14 @@ let test_add_mutation_oracle_pass =
         EXPECT.BIG_MAP.to_have_key(token_id, storage.token_mutate)
     ) in
 
-    let asserts = add_assert(asserts,
-        EXPECT.STRING.to_equal(storage_token_mutate.oracle.params, oracle_details.params)
-    ) in
+    let asserts = match List.head_opt storage_token_mutate.oracle.params with
+      None -> add_fail(asserts)
+    | Some v -> 
+        let asserts = add_assert(asserts,
+            EXPECT.STRING.to_equal(v.0, oracle_params_only.0)
+        ) in
+
+        asserts in
 
     EXPECT.results asserts
 
@@ -57,8 +62,7 @@ let test_add_mutation_oracle_fail_if_caller_is_not_admin =
 
     let oracle_details : FA2.TokenMutate.oracle = {
         address = oracle_addr;
-        params = "blah";
-        fn_name = "data"
+        params = [("blah", "oobar", "bar")];
     } in
 
     let params : FA2.set_oracle = {token_id=token_id; oracle=oracle_details} in
@@ -82,8 +86,7 @@ let test_add_mutation_oracle_fail_if_oracle_doesnt_exist =
 
     let oracle_details : FA2.TokenMutate.oracle = {
         address = Test.nth_bootstrap_account 2;
-        params = "blah";
-        fn_name = "data"
+        params = [("blah", "oobar", "bar")];
     } in
 
     let params : FA2.set_oracle = {token_id=token_id; oracle=oracle_details} in
@@ -107,8 +110,7 @@ let test_add_mutation_oracle_fail_if_oracle_is_wrong_contract_type =
 
     let oracle_details : FA2.TokenMutate.oracle = {
         address = Test.nth_bootstrap_contract 1n;
-        params = "blah";
-        fn_name = "data"
+        params = [("blah", "oobar", "bar")];
     } in
 
     let params : FA2.set_oracle = {token_id=token_id; oracle=oracle_details} in

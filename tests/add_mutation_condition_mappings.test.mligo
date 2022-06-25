@@ -20,9 +20,8 @@ let test_add_mutation_pass =
 
     let (oracle_addr, _, _) = OriginateContract.mockOracle (None: MockOracle.storage option) in
     let oracle_details : FA2.TokenMutate.oracle = {
-        fn_name = "data";
         address = oracle_addr;
-        params = "blah";
+        params = [("blah", "oobar", "bar")];
     } in
 
     let params : FA2.set_oracle = {token_id=token_id; oracle=oracle_details} in

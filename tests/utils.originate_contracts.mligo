@@ -1,4 +1,5 @@
 #import "utils.mligo" "UTILS"
+#import "../contracts/oracle.mligo" "Oracle"
 #import "mock_contracts/data_oracle.mligo" "MockOracle"
 #import "../contracts/nft.mligo" "FA2"
 
@@ -22,6 +23,19 @@ let mock_oracle (init_storage: MockOracle.storage option) : address * (MockOracl
     (mockOracle_addr, mockOracle_taddr, mockOracle)
 
 let mockOracle = mock_oracle
+
+let oracle (init_storage: Oracle.storage option) : address * (Oracle.param, Oracle.storage)typed_address * (Oracle.param)contract =
+    let oracle_storage : Oracle.storage = match init_storage with
+      Some v -> v
+    | None -> (Big_map.empty : Oracle.storage)
+    in
+
+    let compiler = fun(x: Oracle.storage) -> x in
+    let (oracle_addr, _,_) = Test.originate_from_file "contracts/oracle.mligo" "main" ["data"] (Test.run compiler oracle_storage) 0tez in
+    let oracle_taddr : (Oracle.parameter, Oracle.storage)typed_address = Test.cast_address oracle_addr in
+    let oracle = Test.to_contract oracle_taddr in
+
+    (oracle_addr, oracle_taddr, oracle)
 
 let nft (init_storage: FA2.storage option) : address * (FA2.parameter, FA2.storage)typed_address * (FA2.parameter)contract =
     let nft_storage : FA2.storage = match init_storage with

@@ -124,9 +124,8 @@ end
 
 module TokenMutate = struct
     type oracle = {
-        fn_name: string;
         address:address;
-        params: string
+        params: Oracle_types.view_data_params
     }
     type field = {
         name: string;

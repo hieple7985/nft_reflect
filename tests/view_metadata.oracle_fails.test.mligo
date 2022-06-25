@@ -29,7 +29,7 @@ let test_token_metadata_case_when_oracle_fails =
     let mockOracle_addr = Tezos.address(mockOracle) in
 
     let token_mutate_1n : FA2.Storage.metadata_mutate = {
-        oracle = {address = mockOracle_addr; params = "foobar"; fn_name="blah"};
+        oracle = {address = mockOracle_addr; params = [("foobar", "oobar", "bar")]};
         cases = [{
             condition = {
                 top_level_param_name="france";

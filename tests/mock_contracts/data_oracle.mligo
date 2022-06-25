@@ -2,7 +2,7 @@
 
 type storage = response
 
-[@view] let data (_foobar, _s: string * storage) : storage =
+[@view] let data (_foobar, _s: view_data_param * storage) : storage =
     // let () = failwith("Debug") in
     _s
 

@@ -1,20 +1,21 @@
 #import "INT.mligo" "INT"
-#import "MAP.mligo" "MAP"
 #import "utils.mligo" "UTILS"
 
 let _fail_str = UTILS.fail_str
 let _pass_str = UTILS.pass_str
+let print_fail (type a) (val : a) : unit =
+    UTILS.print_fail val
 
 let to_fail (result : test_exec_result) : nat =
     // let expected = Test.eval expected in
     match result with
     | Fail _ -> 0n
     | Success _ ->
-        let _ = Test.log(_fail_str ^ "Transaction was supposed to fail but passed with", result) in
+        let _ = Test.log(print_fail ("Transaction was supposed to fail but passed with", result)) in
         1n
 
 let log_bad_fail(fail, expected_fail_str : michelson_program * string ) =
-    let _ = Test.log(_fail_str ^ "Transaction was supposed to fail with " ^ expected_fail_str ^ " but failed with", fail)
+    let _ = Test.log(print_fail ("Transaction was supposed to fail with " ^ expected_fail_str ^ " but failed with", fail))
     in ()
 
 let to_fail_with (result, expected_fail_str : test_exec_result * string) : nat =
@@ -61,7 +62,7 @@ let add_assert = UTILS.add_assert
 let add_fail = UTILS.add_fail
 
 module INT = INT
-module MAP = MAP
+#include "MAP.mligo"
 #include "BIG_MAP.mligo"
 #include "STRING.mligo"
 #include "BYTES.mligo"
