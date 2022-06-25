@@ -7,19 +7,20 @@
    Errors
 *)
 module Errors = struct
-   let undefined_token = "FA2_TOKEN_UNDEFINED"
-   let ins_balance     = "FA2_INSUFFICIENT_BALANCE"
-   let no_transfer     = "FA2_TX_DENIED"
-   let not_owner       = "FA2_NOT_OWNER"
-   let not_operator    = "FA2_NOT_OPERATOR"
-   let not_supported   = "FA2_OPERATORS_UNSUPPORTED"
-   let rec_hook_fail   = "FA2_RECEIVER_HOOK_FAILED"
-   let send_hook_fail  = "FA2_SENDER_HOOK_FAILED"
-   let rec_hook_undef  = "FA2_RECEIVER_HOOK_UNDEFINED"
-   let send_hook_under = "FA2_SENDER_HOOK_UNDEFINED"
-   let requires_admin  = "NOT_AN_ADMIN"
-   let already_exist   = "UNIQUE_TOKEN_ALREADY_EXIST"
-   let token_exist     = "TOKEN_ID_ALREADY_PRESENT"
+    let undefined_token = "FA2_TOKEN_UNDEFINED"
+    let ins_balance     = "FA2_INSUFFICIENT_BALANCE"
+    let no_transfer     = "FA2_TX_DENIED"
+    let not_owner       = "FA2_NOT_OWNER"
+    let not_operator    = "FA2_NOT_OPERATOR"
+    let not_supported   = "FA2_OPERATORS_UNSUPPORTED"
+    let rec_hook_fail   = "FA2_RECEIVER_HOOK_FAILED"
+    let send_hook_fail  = "FA2_SENDER_HOOK_FAILED"
+    let rec_hook_undef  = "FA2_RECEIVER_HOOK_UNDEFINED"
+    let send_hook_under = "FA2_SENDER_HOOK_UNDEFINED"
+    let requires_admin  = "NOT_AN_ADMIN"
+    let already_exist   = "UNIQUE_TOKEN_ALREADY_EXIST"
+    let token_exist     = "TOKEN_ID_ALREADY_PRESENT"
+    let bad_oracle      = "FA2_TOKEN_BAD_ORACLE"
 end
 
 module Operators = struct
@@ -120,7 +121,7 @@ module TokenMetadata = struct
       md
 end
 
-module MetadataMutate = struct
+module TokenMutate = struct
     type oracle = {
         fn_name: string;
         address:address;
@@ -143,22 +144,50 @@ module MetadataMutate = struct
     }
 
     type cases = case list
+
+    type data = {
+        oracle: oracle;
+        cases: cases
+    }
+
+    type t = (nat, {oracle: oracle; cases: cases}) big_map
+
+    let add_token_mutate (md:t) (token_id:nat) (mutate_data: data) = 
+        let md = if Big_map.mem token_id md then
+            Big_map.update token_id (Some(mutate_data)) md
+        else Big_map.add token_id mutate_data md
+
+        in md
+
+    let set_oracle (token_mutates:t) (token_id: nat) (oracle: oracle) : t =
+        let token_mutates : t = match Big_map.find_opt token_id token_mutates with
+          None -> Big_map.add token_id {oracle=oracle; cases=([]: cases)} token_mutates
+        | Some v -> Big_map.update token_id (Some({v with oracle=oracle})) token_mutates
+
+        in token_mutates
+    (*
+        let md = if Big_map.mem token_id md then
+            Big_map.update token_id (Some(mutate_data)) md
+        else Big_map.add token_id mutate_data md
+        *)
+
 end
 
 module Storage = struct
     type token_id = nat
 
     type metadata_mutate = {
-        oracle: MetadataMutate.oracle;
-        cases: MetadataMutate.cases
+        oracle: TokenMutate.oracle;
+        cases: TokenMutate.cases
     }
 
-    type token_metadata_mutate = (nat, metadata_mutate) big_map
+    type token_metadata_mutate = TokenMutate.t
+    type token_mutate = TokenMutate.t
 
   type t = {
     ledger : Ledger.t;
     token_metadata : TokenMetadata.t;
-    token_metadata_mutate: token_metadata_mutate;
+    token_mutate: TokenMutate.t;
     operators : Operators.t;
     admin     : address
   }
@@ -167,6 +196,9 @@ module Storage = struct
     let _ = Option.unopt_with_error (Big_map.find_opt token_id s.token_metadata)
        Errors.undefined_token in
     ()
+
+  let get_token_mutate (s:t) : TokenMutate.t = s.token_mutate
+  let set_token_mutate (s:t) (token_mutate:TokenMutate.t) = {s with token_mutate = token_mutate}
 
   let get_token_metadata (s:t) = s.token_metadata
   let set_token_metadata (s:t) (token_metadata:TokenMetadata.t) = {s with token_metadata = token_metadata}

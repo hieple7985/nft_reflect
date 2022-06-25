@@ -92,8 +92,6 @@ let test_return_token_metadata_according_to_mutate_mapping =
 
   let token_metadata = token_metadata.token_info in
 
-  let _ = Test.log("CALLED IT LIKE A FUNCTION", token_metadata) in
-  
   let fails = add_fail(fails,
       EXPECT.MAP.to_have_key_of_value ("name", name, token_metadata)
   ) in

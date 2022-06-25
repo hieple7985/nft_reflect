@@ -55,30 +55,14 @@ let get_initial_storage (a, b, c : nat * nat * nat) =
   ] : FA2_multi_asset.TokenMetadata.t) in
 
   (* Token metadata mutation *)
-  let token_metadata_mutate = (Big_map.empty : FA2_multi_asset.Storage.token_metadata_mutate) in
+  let token_mutate = (Big_map.empty : FA2_multi_asset.Storage.token_metadata_mutate) in
 
   let initial_storage = {
     ledger                = ledger;
     token_metadata        = token_metadata;
-    token_metadata_mutate = token_metadata_mutate;
+    token_mutate = token_mutate;
     operators             = operators;
     admin                 = owner1;
   } in
 
   initial_storage, owners, ops
-
-let originate_nft_token_metadata (init_storage: FA2_multi_asset.storage option) : address * michelson_contract * int =
-  let init_storage = match init_storage with
-    Some v -> v
-  | None -> let blah = get_initial_storage(10n, 10n, 10n) in blah.0 in
-
-  let ii2 = Test.run(fun(x:FA2_multi_asset.Storage.t) -> x) init_storage in
-
-  let new_metadata = match Big_map.find_opt 1n init_storage.token_metadata with
-    Some v -> v
-  | None -> (failwith("Invalid") : FA2_multi_asset.TokenMetadata.data)
-  in
-
-  let _ = Test.log("NEW METADAT", new_metadata.token_info) in
-
-  Test.originate_from_file "contracts/nft.mligo" "main" ["token_metadata"] ii2 0tez

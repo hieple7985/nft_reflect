@@ -2,6 +2,7 @@
 #import "utils.parseCondition.mligo" "ParseCondition"
 #include "FA2_multi_asset_updated.mligo"
 #include "View_TokenMetadata.mligo"
+#include "mutate_metadata.mligo"
 
 type parameter = [@layout:comb]
    | Transfer of transfer
@@ -13,6 +14,7 @@ type parameter = [@layout:comb]
    | Create_token of create_token * address * mint *)
    | Mint_token of mint_or_burn list
    | Burn_token of mint_or_burn list
+   | SetOracle of set_oracle
 
 let main ((p,s):(parameter * storage)) = match p with
    Transfer         p -> transfer   p s
@@ -24,3 +26,6 @@ let main ((p,s):(parameter * storage)) = match p with
 | Create_token      p -> create     p s
 | Mint_token        p -> mint       p s
 | Burn_token        p -> burn       p s
+
+(* Metadata mutate operations *)
+| SetOracle         p -> set_oracle(p, s)

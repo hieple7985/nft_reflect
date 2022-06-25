@@ -41,8 +41,8 @@ let test_token_metadata_case_when_oracle_fails =
         }];
     } in
 
-    let token_metadata_mutate_all = Big_map.add 1n token_mutate_1n nft_storage.token_metadata_mutate in
-    let nft_storage = { nft_storage with token_metadata_mutate = token_metadata_mutate_all } in
+    let token_mutate_all = Big_map.add 1n token_mutate_1n nft_storage.token_mutate in
+    let nft_storage = { nft_storage with token_mutate = token_mutate_all } in
 
     let ii2 = fun(x : FA2_NFT.storage) -> x in
     let ii2 = Test.run ii2 nft_storage  in
