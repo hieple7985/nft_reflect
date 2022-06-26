@@ -97,4 +97,4 @@ AddMutateCase {
 
 Note: the token metadata mutate can only deal with simple cases like `=`, `<>` (not equal to), `<`, `<=`, `>`, `>=`.
 
-View the oracle [KT1UUsRrhdwoMg8V86bJmpNXgDCYo9SJ31YJ](https://better-call.dev/ithacanet/KT1UUsRrhdwoMg8V86bJmpNXgDCYo9SJ31YJ/storage/big_map/149053/keys) and the FA2 example contract at [KT19Z6AQpeG1Dy2sw8CsKp4iRPy55qfVgc56](https://better-call.dev/ithacanet/KT19Z6AQpeG1Dy2sw8CsKp4iRPy55qfVgc56/views)
+View the oracle [KT1UUsRrhdwoMg8V86bJmpNXgDCYo9SJ31YJ](https://better-call.dev/ithacanet/KT1UUsRrhdwoMg8V86bJmpNXgDCYo9SJ31YJ/storage/big_map/149053/keys) and the FA2 example contract at [KT1W4obRkGXus4PjuP1zHwfeBSLnVNBazDWF](https://better-call.dev/ithacanet/KT1W4obRkGXus4PjuP1zHwfeBSLnVNBazDWF/views)
