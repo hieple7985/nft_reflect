@@ -5,7 +5,7 @@ Apparently, on-chain views and off-chain views are very different. This project 
 The contract admin can set an oracle with a view entrypoint "data", and the cases it will test the response from the oracle. You can only set one oracle per token.
 
 The metadata for these NFTs can be mutated. To make your NFTs have names, descriptions, display images, etc that change, you'll need
-- [An oracle](#oracle):
+- [An oracle](#setoracle):
 - For token images, links to the images you're planning to use.
 
 ### How To
