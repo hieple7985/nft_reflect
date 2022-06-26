@@ -6,7 +6,7 @@ The contract admin can set an oracle with a view entrypoint "data", and the case
 
 The metadata for these NFTs can be mutated. To make your NFTs have names, descriptions, display images, etc that change, you'll need
 - [An oracle](#setoracle):
-- For token images, links to the images you're planning to use.
+- [The conditions on which your FA2 token should change it's metadata](#addmutatecase---add-metadata-mutation-cases)
 
 ### How To
 When you mint or create your token, make sure you add your token metadata fields. If your oracle ever fails for any reason, the metadata you've set on token creation will be returned. It can also be used as the default case.
